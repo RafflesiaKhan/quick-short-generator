@@ -179,7 +179,7 @@ async def generate_video(request: VideoGenerationRequest, background_tasks: Back
         print(f"Unexpected error in generate_video: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/video/{video_id}")
+@app.api_route("/video/{video_id}", methods=["GET", "HEAD"])
 async def get_video(video_id: str):
     video_path = os.path.join(UPLOAD_DIR, f"{video_id}.mp4")
     if not os.path.exists(video_path):
