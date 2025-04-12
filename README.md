@@ -44,6 +44,7 @@ MINIMAX_GROUP_ID=your_minimax_group_id_here
 ```
 
 Note: You only need to provide the API keys for the services you plan to use. The application will automatically detect available APIs.
+Create a uploads in `backend/uploads` folder if not generate automatically 
 
 4. Run the backend server:
 ```bash
