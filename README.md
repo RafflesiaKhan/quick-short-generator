@@ -1,4 +1,4 @@
-# Video Generator with KlingAI and Minimax
+# Video Generator with KlingAI and Minimax API
 
 This project allows users to upload 1-6 images, provide prompts for each image, and generate a video using either KlingAI's or Minimax's API. The generated videos are merged into a single video file.
 
@@ -29,7 +29,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 2. Install dependencies:
 ```bash
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
 ```
 
 3. Create a `.env` file in the backend directory with your API keys:
@@ -112,6 +112,19 @@ To get a Minimax API key:
 3. Navigate to the developer section
 4. Create a project to get your API key and Group ID
 
-## Contributing
+## Demo
 
-Feel free to submit issues and enhancement requests! 
+Watch a demo video of the application in action: [Video Generator Demo](https://youtu.be/o2ag4GX7GZE)
+
+## Try It Out & Future Ideas
+
+We encourage you to clone this repository, set it up using the instructions above, and generate your own videos!
+
+If you're interested in expanding the project, consider tackling some of the potential improvements mentioned in the `AboutThisProject.md` file, such as:
+
+*   Integrating other AI video providers (RunwayML, Pika Labs, etc.)
+*   Adding advanced prompting options (negative prompts, style references)
+*   Implementing basic video editing features (trimming, music)
+*   Building a template system
+
+Feel free to fork the repository, experiment, and share your enhancements! If you encounter issues or have suggestions, please open an issue on the GitHub repository. 
