@@ -98,7 +98,7 @@ project/
 
 ### KlingAI API
 To get KlingAI credentials:
-1. Visit [KlingAI's website](https://klingai.com)
+1. Visit [KlingAI's website](https://app.klingai.com)
 2. Sign up for an account
 3. Navigate to the API section in your dashboard
 4. You will receive:
@@ -107,7 +107,7 @@ To get KlingAI credentials:
 
 ### Minimax API
 To get a Minimax API key:
-1. Visit [Minimax's website](https://minimax.chat)
+1. Visit [Minimax's website](https://hailuoai.video/)
 2. Create an account
 3. Navigate to the developer section
 4. Create a project to get your API key and Group ID
