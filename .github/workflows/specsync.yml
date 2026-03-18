@@ -1,0 +1,35 @@
+name: SpecSync Agent
+
+on:
+  push:
+    branches-ignore: [main, develop, staging]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  repository_dispatch:
+    types: [wiki-spec-updated]
+
+jobs:
+  specsync:
+    name: SpecSync — Alignment Check
+    if: "!contains(github.event.head_commit.message, '[specsync]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run SpecSync Agent
+        uses: RafflesiaKhan/SpecSync@claude/develop-app-naucM   # ← pin to a release tag when ready
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          spec-directory: '.specsync/specs'
+          test-framework: 'jest'          # jest | vitest | pytest | mocha
+          test-language: 'typescript'     # typescript | javascript | python
+          fail-on-misalignment: 'true'
+          confidence-threshold: '70'
