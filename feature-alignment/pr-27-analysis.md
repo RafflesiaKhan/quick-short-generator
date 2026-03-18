@@ -1,15 +1,15 @@
 # SpecSync Alignment Report
 **PR #27**
 **Spec:** .specsync/specs/featurespec1.md v1.0
-**Checked:** 2026-03-18 19:37:21 UTC
-**Confidence:** 95%
-**Status:** ❌ MISALIGNED
+**Checked:** 2026-03-18 19:38:42 UTC
+**Confidence:** 62%
+**Status:** ❓ SPEC NOT FOUND
 
 ---
 
 ## Summary
 
-The change introduces an incorrect `Content-Type: text/css` header on a multipart file upload request, which will corrupt the HTTP request and cause the Minimax image upload to fail, directly breaking the video generation pipeline.
+The diff makes a minor fix to Minimax image upload headers, but this single-line change only partially addresses AC #9 (Minimax authentication) and introduces a technical conflict by setting Content-Type to application/json on a multipart file upload request.
 
 ## Changed Files
 
@@ -19,38 +19,39 @@ The change introduces an incorrect `Content-Type: text/css` header on a multipar
 
 ### ❌ Blocking Issues
 
-- [ ] The Minimax image upload request now sets `Content-Type: text/css`, which is semantically wrong for a multipart file upload. Manually setting Content-Type on a `requests` multipart POST overrides the automatically generated boundary header, causing the server to be unable to parse the file payload. This breaks Minimax authentication and file upload entirely.
+- [ ] Setting 'Content-Type: application/json' while simultaneously posting multipart 'files=files' is technically incorrect. The requests library automatically sets the correct 'multipart/form-data' Content-Type with boundary when 'files' is provided; manually overriding it with 'application/json' will likely cause the Minimax upload endpoint to reject the request.
   > File: `backend/minimax_client.py`
-  > Function: `upload image logic inside MinimaxClient (line ~30)()`
+  > Function: `generate_video (image upload step)()`
   > Acceptance Criteria: #9
-- [ ] Because the Minimax image upload will fail due to the malformed Content-Type header, no video segment can be generated for Minimax jobs, meaning no segments can be merged into the final MP4 via the BackgroundTask. The entire pipeline is blocked for Minimax provider.
+
+### ⚠️ Warnings
+
+- [ ] The spec requires Minimax requests to use the API Key and Group ID as authentication parameters. It is not confirmed whether the Group ID is being passed in the upload request — this is not visible in the diff context and needs verification.
   > File: `backend/minimax_client.py`
-  > Function: `upload image logic inside MinimaxClient (line ~30)()`
-  > Acceptance Criteria: #10
-- [ ] The malformed Content-Type header will cause upload_response.raise_for_status() to raise an exception (likely a 400 or 415 from the Minimax API), which may or may not be caught and surfaced as a structured error. Even if caught, the root cause is an implementation defect rather than a provider error, so error messaging to the frontend would be misleading.
+- [ ] No evidence in this diff that Moviepy segment merging and BackgroundTask execution are implemented; this remains unverified for the Minimax code path.
   > File: `backend/minimax_client.py`
-  > Function: `upload image logic inside MinimaxClient (line ~30)()`
-  > Acceptance Criteria: #12
+- [ ] No evidence of structured error handling for Minimax upload failures (e.g., unsupported image format, auth errors) surfacing a human-readable message to the frontend.
+  > File: `backend/minimax_client.py`
 
 ## Tests That Cannot Be Written Until Gaps Are Fixed
 
 The following test cases are required by the spec but cannot be generated
 because the implementation does not exist yet:
 
+### Unit — Negative
+
+- `Test that Minimax image upload request does NOT include a manually set Content-Type header so that requests library correctly sets multipart/form-data with boundary`
+  ↳ Blocked: The current implementation sets Content-Type: application/json which conflicts with multipart file upload; test cannot pass until the header override is removed
+
 ### Unit — Positive
 
-- `Verify that a Minimax image upload request does NOT include a manually set Content-Type header, allowing `requests` to automatically set multipart/form-data with the correct boundary.`
-  ↳ Blocked: The current implementation sends an incorrect Content-Type header, making this test fail until the defect is reverted.
+- `Test that Minimax upload request includes the Group ID as an authentication parameter alongside the API key`
+  ↳ Blocked: Group ID inclusion is not visible in the diff and may not be implemented yet
 
 ### Integration
 
-- `Integration test: submit a Minimax generate-video job end-to-end and confirm that the image upload step succeeds with HTTP 200 from the Minimax media/upload endpoint.`
-  ↳ Blocked: The malformed Content-Type header will cause the Minimax API to reject the upload, blocking this test from passing.
-
-### Contract
-
-- `Contract test: confirm the request sent to `POST /media/upload` has a Content-Type that starts with `multipart/form-data` and includes a valid boundary parameter.`
-  ↳ Blocked: Current implementation hard-codes `text/css` as Content-Type, violating the multipart contract.
+- `Integration test: uploading an unsupported image format to Minimax surfaces the provider error message to the frontend`
+  ↳ Blocked: Error propagation from minimax_client to frontend response is not confirmed in this diff
 
 ---
 
@@ -66,4 +67,4 @@ SpecSync will automatically re-check this branch once the spec is updated.
 
 ---
 
-*Generated by [SpecSync Agent](https://github.com/specsync/specsync-agent) · 2026-03-18 19:37:21 UTC*
+*Generated by [SpecSync Agent](https://github.com/specsync/specsync-agent) · 2026-03-18 19:38:42 UTC*
