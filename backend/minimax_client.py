@@ -32,7 +32,7 @@ class MinimaxClient:
             files = {"file": image_file}
             upload_response = requests.post(
                 f"{self.base_url}/media/upload",
-                headers={"Authorization": f"Bearer {self.api_key}"},
+                headers={"Content-Type": "application/json", "Authorization": f"Bearer {self.api_key}"},
                 files=files
             )
             upload_response.raise_for_status()
