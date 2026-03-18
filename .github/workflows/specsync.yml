@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: Run SpecSync Agent
-        uses: RafflesiaKhan/SpecSync@claude/develop-app-naucM   # ← pin to a release tag when ready
+        uses: RafflesiaKhan/SpecSync@main
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
